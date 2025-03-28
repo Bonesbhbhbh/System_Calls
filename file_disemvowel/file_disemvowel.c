@@ -21,7 +21,7 @@ int copy_non_vowels(int num_chars, char* in_buf, char* out_buf) {
 	 * and this function should return the number of non-vowels that
 	 * that were copied over.
 	 */
-	printf("in copy_non_vowels!\n");
+	//printf("in copy_non_vowels!\n");
 	int count = 0;
 	for(int i = 0 ; i < num_chars; i++) {
 		if(!is_vowel(in_buf[i])) {
@@ -29,7 +29,7 @@ int copy_non_vowels(int num_chars, char* in_buf, char* out_buf) {
             count++;
 		}
 	}
-	printf("leaving copy_non_vowels\n");
+	//printf("leaving copy_non_vowels\n");
 	return count;
 }
 
@@ -46,17 +46,17 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 	char out_buff[BUF_SIZE];
 
 	while((num_chars = fread(in_buff, sizeof(char), BUF_SIZE, inputFile)) > 0) {  //copilot suggestion... treat with skepticism ...
-		printf("in while loop, disemvowel - size of num_chars is: %d\n",num_chars);
+		//printf("in while loop, disemvowel - size of num_chars is: %d\n",num_chars);
 		int consonants = copy_non_vowels(num_chars, in_buff, out_buff);
 		size_t written = 0;
-		printf("size of consonants is:%d\n size of written is: %d\n",consonants,written);
+		//printf("size of consonants is:%d\n size of written is: %d\n",consonants,written);
 		while(written < consonants){
 			written += fwrite(out_buff + written, sizeof(char), consonants - written, outputFile);
-			printf("size of consonants is:%d\n size of written is: %d\n",consonants,written);
+			//printf("size of consonants is:%d\n size of written is: %d\n",consonants,written);
 		}
-		printf("out of internal while-loop haven't left fread() purgatory\n");
+		//printf("out of internal while-loop haven't left fread() purgatory\n");
 	}
-	printf("out of while-loop, disemvowel\n");
+	//printf("out of while-loop, disemvowel\n");
 	return;
 }
 
@@ -66,10 +66,13 @@ int main(int argc, char *argv[]) {
 	// This sets these to `stdin` and `stdout` by default.
 	// You then need to set them to user specified files when the user
 	// provides files names as command line arguments.
+
+	/*
 	printf("opened main with %d arguments \n",(argc -1));
 	for(int i = 1 ; i < argc; i++) {
 		printf("argv[%d]: %s\n",i,argv[i]);
 	}
+	*/
 	FILE* inputFile = stdin;
 	FILE* outputFile = stdout;
 
@@ -89,11 +92,11 @@ int main(int argc, char *argv[]) {
 			return 0;
 		}
 	}
-	printf("input and output initialized\n");
+	//printf("input and output initialized\n");
 	disemvowel(inputFile, outputFile);
-	printf("done disemvowel-ing\n");
+	//printf("done disemvowel-ing\n");
 	fclose(outputFile);
 	fclose(inputFile);
-	printf("closed files\n");
+	//printf("closed files\n");
 	return 0;
 }
