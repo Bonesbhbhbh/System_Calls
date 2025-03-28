@@ -45,12 +45,16 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
     char in_buff[BUF_SIZE];
 	char out_buff[BUF_SIZE];
 
-	printf("in disemvowel and past variable initialization\n");
 	while((num_chars = fread(in_buff, sizeof(char), BUF_SIZE, inputFile)) > 0) {  //copilot suggestion... treat with skepticism ...
-	    printf("in while loop, disemvowel\n");
-		fread(in_buff, sizeof(char), BUF_SIZE, inputFile);
-		copy_non_vowels(num_chars, in_buff, out_buff);
-		fwrite(out_buff, sizeof(char), BUF_SIZE, outputFile);
+		printf("in while loop, disemvowel - size of num_chars is: %d\n",num_chars);
+		int consonants = copy_non_vowels(num_chars, in_buff, out_buff);
+		size_t written = 0;
+		printf("size of consonants is:%d\n size of written is: %d\n",consonants,written);
+		while(written < consonants){
+			written += fwrite(out_buff + written, sizeof(char), consonants - written, outputFile);
+			printf("size of consonants is:%d\n size of written is: %d\n",consonants,written);
+		}
+		printf("out of internal while-loop haven't left fread() purgatory\n");
 	}
 	printf("out of while-loop, disemvowel\n");
 	return;
@@ -62,8 +66,8 @@ int main(int argc, char *argv[]) {
 	// This sets these to `stdin` and `stdout` by default.
 	// You then need to set them to user specified files when the user
 	// provides files names as command line arguments.
-	printf("opened main with %d argument \n",argc);
-	for(int i = 0 ; i < argc; i++) {
+	printf("opened main with %d arguments \n",(argc -1));
+	for(int i = 1 ; i < argc; i++) {
 		printf("argv[%d]: %s\n",i,argv[i]);
 	}
 	FILE* inputFile = stdin;
@@ -71,33 +75,25 @@ int main(int argc, char *argv[]) {
 
 	// Code that processes the command line arguments
 	// and sets up inputFile and outputFile.
-	/*
-	        if(argc >= 2) {
-	                inputFile = fopen(argv[1], "r");
-	                if (inputFile == NULL) {
-	                        printf("error opening input file");
-	                        return 0;
-	                }
-	        }
-	*/
-	if(argc == 3) {
-		printf("in if-cond\n");
-		inputFile = fopen(argv[1], "r");
-		if(inputFile == NULL) {
-			printf("could not open input file or empty input file\n");
-			return 0;
-		}
+	if(argc >= 2) {
+	    inputFile = fopen(argv[1], "r");
+	    if (inputFile == NULL) {
+	        printf("error opening input file\n");
+	        return 0;
+	    }
+	}
+	if(argc >= 3) {
 		outputFile = fopen(argv[2], "w");
 		if(outputFile == NULL) {
 			printf("could not open output file\n");
 			return 0;
 		}
 	}
-	printf("out of if-cond\n");
+	printf("input and output initialized\n");
 	disemvowel(inputFile, outputFile);
 	printf("done disemvowel-ing\n");
-	fclose(inputFile);
 	fclose(outputFile);
+	fclose(inputFile);
 	printf("closed files\n");
 	return 0;
 }
