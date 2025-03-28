@@ -25,8 +25,8 @@ int copy_non_vowels(int num_chars, char* in_buf, char* out_buf) {
 	int count = 0;
 	for(int i = 0 ; i < num_chars; i++) {
 		if(!is_vowel(in_buf[i])) {
-			count++ ;
             out_buf[count] = in_buf[i]; // take the non-vowel and add it to the out_buf
+            count++;
 		}
 	}
 	printf("leaving copy_non_vowels\n");
