@@ -28,7 +28,7 @@ bool is_dir(const char* path) {
 }
 
 /* 
- * I needed this because the multiple recursion means there's no way to
+ * I needed this because the mutual recursion means there's no way to
  * order them so that the definitions all precede the cause.
  */
 void process_path(const char*);
@@ -49,7 +49,7 @@ void process_directory(const char* path) {
   opendir(path);
   while(readdir(path)){
     if(readdir(path) != "." && readdir(path) != ".."){ // supposed to be checking the 'd_name' from readdir()?
-      process_directory(path);
+      process_path(path);
     }
   }
   closedir(path);
