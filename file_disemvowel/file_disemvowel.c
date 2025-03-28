@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdbool.h>
-
 #include  <ctype.h>
 
 #define BUF_SIZE 1024
@@ -10,10 +9,9 @@ bool is_vowel(char c) {
 	 * Returns true if c is a vowel (upper or lower case), and
 	 * false otherwise.
 	 */
-	 printf("in is_vowel\n");
 	c = tolower(c);
 	bool isVowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ); //gonna ignore y here
-	return is_vowel(c);
+	return isVowel;
 }
 
 int copy_non_vowels(int num_chars, char* in_buf, char* out_buf) {
@@ -23,12 +21,12 @@ int copy_non_vowels(int num_chars, char* in_buf, char* out_buf) {
 	 * and this function should return the number of non-vowels that
 	 * that were copied over.
 	 */
-	 printf("in copy_non_vowels!\n");
+	printf("in copy_non_vowels!\n");
 	int count = 0;
 	for(int i = 0 ; i < num_chars; i++) {
-		if(is_vowel(in_buf[i])) {
-			//  fprintf(out_buf, in_buf[i]);
+		if(!is_vowel(in_buf[i])) {
 			count++ ;
+            out_buf[count] = in_buf[i]; // take the non-vowel and add it to the out_buf
 		}
 	}
 	printf("leaving copy_non_vowels\n");
@@ -42,19 +40,19 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 	 * in a buffer of data, copy the non-vowels to the output buffer, and
 	 * use fwrite to write that out.
 	 */
-	printf("in disemvowel\n");
-	char in_buff[BUF_SIZE];
+    size_t num_chars;
+    
+    char in_buff[BUF_SIZE];
 	char out_buff[BUF_SIZE];
-	printf("past buffer initialization\n");
-	size_t num_chars;
-	printf("in disemvowel and past initialization\n");
-	while(!feof(inputFile)) {
+
+	printf("in disemvowel and past variable initialization\n");
+	while((num_chars = fread(in_buff, sizeof(char), BUF_SIZE, inputFile)) > 0) {  //copilot suggestion... treat with skepticism ...
 	    printf("in while loop, disemvowel\n");
 		fread(in_buff, sizeof(char), BUF_SIZE, inputFile);
 		copy_non_vowels(num_chars, in_buff, out_buff);
 		fwrite(out_buff, sizeof(char), BUF_SIZE, outputFile);
 	}
-	printf("out of while loop, disemvowel\n");
+	printf("out of while-loop, disemvowel\n");
 	return;
 }
 
