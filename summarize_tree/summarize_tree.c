@@ -46,9 +46,9 @@ void process_directory(const char* path) {
    * done.
    */
   chdir(path);
-  opendir(path);
-  while(readdir(path)){
-    if(readdir(path) != "." && readdir(path) != ".."){ // supposed to be checking the 'd_name' from readdir()?
+  DIR* dir = opendir(path);
+  while(readdir(dir)){
+    if(readdir(dir) != "." && readdir(dir) != ".."){ // supposed to be checking the 'd_name' from readdir()?
       process_path(path);
     }
   }
