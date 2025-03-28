@@ -16,6 +16,15 @@ bool is_dir(const char* path) {
    * return value from stat() in case there is a problem, e.g., maybe the
    * the file doesn't actually exist.
    */
+
+  struct stat buf[1024];
+  int status = stat(path, &buf); //https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
+  if (status == 0){
+    return S_ISDIR(buf->st_mode);
+  } else {
+    printf("error in stat()");
+    return false;
+  }
 }
 
 /* 
@@ -36,6 +45,15 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
+  chdir(path);
+  opendir(path);
+  while(readdir(path)){
+    if(readdir(path) != "." && readdir(path) != ".."){ // supposed to be checking the 'd_name' from readdir()?
+      process_directory(path);
+    }
+  }
+  closedir(path);
+  chdir("..");
 }
 
 void process_file(const char* path) {
@@ -43,6 +61,7 @@ void process_file(const char* path) {
    * Update the number of regular files.
    * This is as simple as it seems. :-)
    */
+  num_regular++;
 }
 
 void process_path(const char* path) {
