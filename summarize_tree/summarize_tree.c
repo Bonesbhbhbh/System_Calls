@@ -17,12 +17,12 @@ bool is_dir(const char* path) {
    * the file doesn't actually exist.
    */
 
-  struct stat buf[1024];
+  struct stat buf;
   int status = stat(path, &buf); //https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
   if (status == 0){
-    return S_ISDIR(buf->st_mode);
+    return S_ISDIR(buf.st_mode);
   } else {
-    printf("error in stat()");
+    perror("error in stat()");
     return false;
   }
 }
@@ -47,9 +47,11 @@ void process_directory(const char* path) {
    */
   chdir(path);
   DIR* dir = opendir(path);
-  while(readdir(dir)){
-    if(readdir(dir) != "." && readdir(dir) != ".."){ // supposed to be checking the 'd_name' from readdir()?
-      process_path(path);
+  struct dirent* name;
+
+  while((name = readdir(dir)) != NULL){
+    if((strcmp(name,".") != 1)  && (strcmp(name,"..") != 1)){
+      process_path(name);
     }
   }
   closedir(path);
