@@ -46,12 +46,12 @@ void process_directory(const char* path) {
    * done.
    */
   chdir(path);
-  DIR* dir = opendir(path);
-  struct dirent* name;
+  DIR* dir = opendir(path); // open the directory
+  struct dirent* child;
 
-  while((name = readdir(dir)) != NULL){
-    if((strcmp(name,".") != 1)  && (strcmp(name,"..") != 1)){
-      process_path(name);
+  while((child = readdir(dir)) != NULL){ // if the next item in the Dir is not null assign it to `name`
+    if(strcmp(child->d_name,".") + (strcmp(child->d_name,"..") != 0)){
+      process_path(child);
     }
   }
   closedir(path);
