@@ -8,7 +8,8 @@
 
 static int num_dirs, num_regular;
 
-bool is_dir(const char* path) {
+bool is_dir(const char *path)
+{
   /*
    * Use the stat() function (try "man 2 stat") to determine if the file
    * referenced by path is a directory or not.  Call stat, and then use
@@ -18,22 +19,26 @@ bool is_dir(const char* path) {
    */
 
   struct stat buf;
-  int status = stat(path, &buf); //https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
-  if (status == 0){
+  int status = stat(path, &buf); // https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
+  if (status == 0)
+  {
     return S_ISDIR(buf.st_mode);
-  } else {
+  }
+  else
+  {
     perror("error in stat()");
     return false;
   }
 }
 
-/* 
+/*
  * I needed this because the mutual recursion means there's no way to
  * order them so that the definitions all precede the cause.
  */
-void process_path(const char*);
+void process_path(const char *);
 
-void process_directory(const char* path) {
+void process_directory(const char *path)
+{
   /*
    * Update the number of directories seen, use opendir() to open the
    * directory, and then use readdir() to loop through the entries
@@ -45,21 +50,48 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
-  num_dirs++;
-  chdir(path);
-  DIR* dir = opendir(path); // open the directory
-  struct dirent* child;
+  // num_dirs++;
+  // chdir(path);
+  // DIR* dir = opendir(path); // open the directory
+  // struct dirent* child;
 
-  while((child = readdir(dir)) != NULL){ // if the next item in the Dir is not null assign it to `name`
-    if(strcmp(child->d_name,".") + (strcmp(child->d_name,"..") != 0)){
-      process_path(child->d_name);
-    }
+  // while((child = readdir(dir)) != NULL){ // if the next item in the Dir is not null assign it to `name`
+  //   if(strcmp(child->d_name,".") + (strcmp(child->d_name,"..") != 0)){
+  //     process_path(child->d_name);
+  //   }
+  // }
+  // closedir(path);
+  // chdir("..");
+
+  num_dirs++;
+  int chdir_err = chdir(path);
+  if (chdir_err != 0)
+  {
+    perror("Error: change directory failed\n");
+    fprintf(stderr, "Path: %s\n", path);
+    exit(1);
   }
-  closedir(path);
-  chdir("..");
+  DIR *dir = opendir(".");
+  struct dirent *ent;
+  while ((ent = readdir(dir)) != NULL)
+  {
+    if (strcmp(ent->d_name, "..") == 0 || strcmp(ent->d_name, ".") == 0)
+    {
+      continue;
+    }
+    process_path(ent->d_name);
+  }
+  closedir(dir);
+  int second_chdir_err = chdir("..");
+  if (second_chdir_err != 0)
+  {
+    fprintf(stderr, "Path: %s\n", path);
+    exit(1);
+  }
 }
 
-void process_file(const char* path) {
+void process_file(const char *path)
+{
   /*
    * Update the number of regular files.
    * This is as simple as it seems. :-)
@@ -67,19 +99,25 @@ void process_file(const char* path) {
   num_regular++;
 }
 
-void process_path(const char* path) {
-  if (is_dir(path)) {
+void process_path(const char *path)
+{
+  if (is_dir(path))
+  {
     process_directory(path);
-  } else {
+  }
+  else
+  {
     process_file(path);
   }
 }
 
-int main (int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   // Ensure an argument was provided.
-  if (argc != 2) {
-    printf ("Usage: %s <path>\n", argv[0]);
-    printf ("       where <path> is the file or root of the tree you want to summarize.\n");
+  if (argc != 2)
+  {
+    printf("Usage: %s <path>\n", argv[0]);
+    printf("       where <path> is the file or root of the tree you want to summarize.\n");
     return 1;
   }
 
